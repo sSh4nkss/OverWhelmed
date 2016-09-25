@@ -2,11 +2,11 @@ package com.first.game.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.first.game.FirstGame;
+import com.over.whelmed.OverWhelmed;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		new LwjglApplication(new FirstGame(), config);
+		new LwjglApplication(new OverWhelmed(), config);
 	}
 }
