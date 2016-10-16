@@ -22,6 +22,7 @@ public class OverWhelmed implements Screen{
 	private GameManager game;
 	SpriteBatch batch;
 	Texture img;
+	float moonspeed;
 	int mistspeed;
 	int x;
 	int y;
@@ -82,12 +83,15 @@ public class OverWhelmed implements Screen{
 		mist = new Sprite(new Texture(Gdx.files.internal("C:\\Users\\Sh4nks\\workspace\\OverWhelmed\\core\\assets\\Mist.png")));
 		moon = new Sprite(new Texture(Gdx.files.internal("C:\\Users\\Sh4nks\\workspace\\OverWhelmed\\core\\assets\\Moon.png")));
 		wall.scale(1);
+		moon.scale(1);
+		moon.scale(scalingFactor);
 		mist.scale(1);
 		mist.scale(scalingFactor);
 		nightsky.scale(scalingFactor);
 		wall.scale(scalingFactor);
 		background.scale((float) 0.3);
 		background.scale(scalingFactor);
+		moonspeed = 0.1f;
 		mistspeed = 10;
 		x = 1000;
 		wallx = -1000;
@@ -112,8 +116,8 @@ public class OverWhelmed implements Screen{
 		batch.draw(wall, movement-150, 0, wall.getScaleX()*wall.getWidth(), wall.getScaleY()*wall.getHeight());
 		batch.draw(currentFrame, x, 46, currentFrame.getScaleX()*currentFrame.getWidth(), currentFrame.getScaleY()*currentFrame.getHeight());
 		batch.draw(background, movement, 0, background.getScaleX()*background.getWidth(), background.getScaleY()*background.getHeight());
+		batch.draw(moon, moonspeed + movement, 0 + moonspeed, moon.getScaleX()*moon.getWidth(), moon.getScaleY()*moon.getHeight());
 		batch.draw(mist, mistspeed + movement, 0, mist.getScaleX()*mist.getWidth(), mist.getScaleY()*mist.getHeight());
-		batch.draw(moon, movement, 0, moon.getScaleX()*moon.getWidth(), moon.getScaleY()*moon.getHeight());
 		batch.end();
 		mistspeed++;
 		if (Gdx.input.isKeyPressed(Keys.DPAD_RIGHT)) 
@@ -129,6 +133,9 @@ public class OverWhelmed implements Screen{
 		}
 		if (Gdx.input.isKeyPressed(Keys.DPAD_LEFT)&&(x>1000)){
 			x-= 5;
+		}
+		if (moonspeed < 400){
+		moonspeed ++;
 		}
 		if (x>1750){
 			x=1750;
