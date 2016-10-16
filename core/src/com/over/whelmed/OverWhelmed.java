@@ -1,6 +1,9 @@
 package com.over.whelmed;
 
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
@@ -51,11 +54,11 @@ public class OverWhelmed implements Screen{
 	}
 	
 	@Override
-	public void show () {
-		Music music = Gdx.audio.newMusic(Gdx.files.internal("C:\\Users\\Sh4nks\\workspace\\OverWhelmed\\core\\assets\\NightTime.mp3"));
+	public void show () {		
+		Music music = Gdx.audio.newMusic(Gdx.files.internal("..\\core\\assets\\NightTime.mp3"));
 
 		final float scalingFactor = getScalingFactor();
-		Texture knightsheet = new Texture(Gdx.files.internal("C:\\Users\\Sh4nks\\workspace\\OverWhelmed\\core\\assets\\Knight.png"));
+		Texture knightsheet = new Texture(Gdx.files.internal("..\\core\\assets\\Knight.png"));
 		
 		knightwalk = new Sprite[4];
 		knightwalk[0] = new Sprite(knightsheet,0,0,39,35);
@@ -77,11 +80,11 @@ public class OverWhelmed implements Screen{
 		camera = new OrthographicCamera();
 	    viewport = new ExtendViewport(800, 600, camera);
 		batch = new SpriteBatch();
-		nightsky = new Sprite(new Texture(Gdx.files.internal("C:\\Users\\Sh4nks\\workspace\\OverWhelmed\\core\\assets\\Night Sky.png")));
-		background = new Sprite(new Texture(Gdx.files.internal("C:\\Users\\Sh4nks\\workspace\\OverWhelmed\\core\\assets\\Background.png")));
-		wall = new Sprite(new Texture(Gdx.files.internal("C:\\Users\\Sh4nks\\workspace\\OverWhelmed\\core\\assets\\Wall.png")));
-		mist = new Sprite(new Texture(Gdx.files.internal("C:\\Users\\Sh4nks\\workspace\\OverWhelmed\\core\\assets\\Mist.png")));
-		moon = new Sprite(new Texture(Gdx.files.internal("C:\\Users\\Sh4nks\\workspace\\OverWhelmed\\core\\assets\\Moon.png")));
+		nightsky = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Night Sky.png")));
+		background = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Background.png")));
+		wall = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Wall.png")));
+		mist = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Mist.png")));
+		moon = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Moon.png")));
 		wall.scale(1);
 		moon.scale(1);
 		moon.scale(scalingFactor);
