@@ -1,9 +1,6 @@
 package com.over.whelmed;
 
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
@@ -15,7 +12,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -25,7 +21,8 @@ public class OverWhelmed implements Screen{
 	private GameManager game;
 	SpriteBatch batch;
 	Texture img;
-	float moonspeed;
+	float xmoonposition;
+	float ymoonposition;
 	int mistspeed;
 	int x;
 	int y;
@@ -33,6 +30,7 @@ public class OverWhelmed implements Screen{
 	int wallx;
 	int timer;
 	boolean directionforward;
+	Sprite BackgroundRocks;
 	Sprite background;
 	Sprite wall;
 	Sprite nightsky;
@@ -80,11 +78,14 @@ public class OverWhelmed implements Screen{
 		camera = new OrthographicCamera();
 	    viewport = new ExtendViewport(800, 600, camera);
 		batch = new SpriteBatch();
+		BackgroundRocks = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Background Rocks.png")));
 		nightsky = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Night Sky.png")));
 		background = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Background.png")));
 		wall = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Wall.png")));
 		mist = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Mist.png")));
 		moon = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Moon.png")));
+		BackgroundRocks.scale(1);
+		BackgroundRocks.scale(scalingFactor);
 		wall.scale(1);
 		moon.scale(1);
 		moon.scale(scalingFactor);
@@ -94,8 +95,9 @@ public class OverWhelmed implements Screen{
 		wall.scale(scalingFactor);
 		background.scale((float) 0.3);
 		background.scale(scalingFactor);
-		moonspeed = 0.1f;
-		mistspeed = 10;
+		xmoonposition = 0.1f;
+		ymoonposition = 0.1f;
+		mistspeed = -1000;
 		x = 1000;
 		wallx = -1000;
 		movement = -600;
@@ -115,14 +117,18 @@ public class OverWhelmed implements Screen{
 		stateTime += Gdx.graphics.getDeltaTime();
 		currentFrame = (Sprite)Knightanimation.getKeyFrame(stateTime, true);
 		batch.begin();
-		batch.draw(nightsky, movement, 0, nightsky.getScaleX()*nightsky.getWidth(), nightsky.getScaleY()*nightsky.getHeight());
+		batch.draw(nightsky, movement/2, 0, nightsky.getScaleX()*nightsky.getWidth(), nightsky.getScaleY()*nightsky.getHeight());
+		batch.draw(BackgroundRocks, movement, 0, BackgroundRocks.getScaleX()*BackgroundRocks.getWidth(), BackgroundRocks.getScaleY()*BackgroundRocks.getHeight());
 		batch.draw(wall, movement-150, 0, wall.getScaleX()*wall.getWidth(), wall.getScaleY()*wall.getHeight());
 		batch.draw(currentFrame, x, 46, currentFrame.getScaleX()*currentFrame.getWidth(), currentFrame.getScaleY()*currentFrame.getHeight());
+		batch.draw(moon, xmoonposition + movement, 0 + ymoonposition, moon.getScaleX()*moon.getWidth(), moon.getScaleY()*moon.getHeight());
 		batch.draw(background, movement, 0, background.getScaleX()*background.getWidth(), background.getScaleY()*background.getHeight());
-		batch.draw(moon, moonspeed + movement, 0 + moonspeed, moon.getScaleX()*moon.getWidth(), moon.getScaleY()*moon.getHeight());
 		batch.draw(mist, mistspeed + movement, 0, mist.getScaleX()*mist.getWidth(), mist.getScaleY()*mist.getHeight());
 		batch.end();
 		mistspeed++;
+		//if (mistspeed == 200)
+			//WORK WITH JACK HERE
+			//NEED TO FIX THE MIST
 		if (Gdx.input.isKeyPressed(Keys.DPAD_RIGHT)) 
 		      movement -= 5;
 		if (Gdx.input.isKeyPressed(Keys.DPAD_LEFT)) 
@@ -137,8 +143,12 @@ public class OverWhelmed implements Screen{
 		if (Gdx.input.isKeyPressed(Keys.DPAD_LEFT)&&(x>1000)){
 			x-= 5;
 		}
-		if (moonspeed < 400){
-		moonspeed ++;
+		if (xmoonposition<1000){
+			xmoonposition += 1.1;
+		}
+		if (ymoonposition < 400){
+			//https://www.desmos.com/calculator/00kjado6gm
+			ymoonposition = (float) (-0.05*(0.1*Math.pow(xmoonposition-180, 2.0))+160);
 		}
 		if (x>1750){
 			x=1750;
