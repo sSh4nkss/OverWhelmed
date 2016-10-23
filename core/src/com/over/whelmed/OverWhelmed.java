@@ -1,6 +1,10 @@
 package com.over.whelmed;
 
 
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
@@ -23,7 +27,6 @@ public class OverWhelmed implements Screen{
 	Texture img;
 	float xmoonposition;
 	float ymoonposition;
-	int mistspeed;
 	int x;
 	int y;
 	int movement;
@@ -38,7 +41,7 @@ public class OverWhelmed implements Screen{
 	float stateTime;
 	Sprite currentFrame;
 	Sprite moon;
-	Sprite mist;
+	List<Sprite> mistlist;
 	Sprite[] knightwalk;
 	Animation Knightanimation;
 	public OverWhelmed(GameManager game) {
@@ -57,6 +60,8 @@ public class OverWhelmed implements Screen{
 
 		final float scalingFactor = getScalingFactor();
 		Texture knightsheet = new Texture(Gdx.files.internal("..\\core\\assets\\Knight.png"));
+		
+		mistlist = new ArrayList<Sprite>();
 		
 		knightwalk = new Sprite[4];
 		knightwalk[0] = new Sprite(knightsheet,0,0,39,35);
@@ -82,22 +87,22 @@ public class OverWhelmed implements Screen{
 		nightsky = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Night Sky.png")));
 		background = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Background.png")));
 		wall = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Wall.png")));
-		mist = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Mist.png")));
+		Sprite mist = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Mist.png")));
+		mistlist.add(mist);
+		mist.scale(1);
+		mist.scale(scalingFactor);
 		moon = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Moon.png")));
 		BackgroundRocks.scale(1);
 		BackgroundRocks.scale(scalingFactor);
 		wall.scale(1);
 		moon.scale(1);
 		moon.scale(scalingFactor);
-		mist.scale(1);
-		mist.scale(scalingFactor);
 		nightsky.scale(scalingFactor);
 		wall.scale(scalingFactor);
 		background.scale((float) 0.3);
 		background.scale(scalingFactor);
 		xmoonposition = 0.1f;
 		ymoonposition = 0.1f;
-		mistspeed = -1000;
 		x = 1000;
 		wallx = -1000;
 		movement = -600;
@@ -111,7 +116,6 @@ public class OverWhelmed implements Screen{
 	}
 	@Override
 	public void render(float delta) {
-		
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT); 
 		batch.enableBlending();
 		stateTime += Gdx.graphics.getDeltaTime();
@@ -123,12 +127,27 @@ public class OverWhelmed implements Screen{
 		batch.draw(currentFrame, x, 46, currentFrame.getScaleX()*currentFrame.getWidth(), currentFrame.getScaleY()*currentFrame.getHeight());
 		batch.draw(moon, xmoonposition + movement, 0 + ymoonposition, moon.getScaleX()*moon.getWidth(), moon.getScaleY()*moon.getHeight());
 		batch.draw(background, movement, 0, background.getScaleX()*background.getWidth(), background.getScaleY()*background.getHeight());
-		batch.draw(mist, mistspeed + movement, 0, mist.getScaleX()*mist.getWidth(), mist.getScaleY()*mist.getHeight());
+		for(Sprite mist : mistlist){
+			batch.draw(mist, mist.getX() + movement, 0, mist.getScaleX()*mist.getWidth(), mist.getScaleY()*mist.getHeight());
+			mist.setX(mist.getX()+1);
+		}
+		Sprite firstmist = mistlist.get(0);
+		if(firstmist.getX() >= 0){
+			Sprite mist = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Mist.png")));
+			mistlist.add(0, mist);
+			mist.scale(1);
+			mist.scale(getScalingFactor());
+			mist.setX(0-mist.getWidth()*mist.getScaleX());
+		}
+		
+		Sprite lastmist = mistlist.get(mistlist.size()-1);
+		if(lastmist.getX() >= lastmist.getWidth()*lastmist.getScaleX()+1000){
+			mistlist.remove(lastmist);
+			xmoonposition = 950;
+			ymoonposition = 100;
+		}
 		batch.end();
-		mistspeed++;
-		//if (mistspeed == 200)
-			//WORK WITH JACK HERE
-			//NEED TO FIX THE MIST
+		
 		if (Gdx.input.isKeyPressed(Keys.DPAD_RIGHT)) 
 		      movement -= 5;
 		if (Gdx.input.isKeyPressed(Keys.DPAD_LEFT)) 
