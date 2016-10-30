@@ -32,6 +32,7 @@ public class OverWhelmed implements Screen{
 	int movement;
 	int wallx;
 	int timer;
+	final int originx = 0;
 	boolean directionforward;
 	Sprite BackgroundRocks;
 	Sprite background;
@@ -39,6 +40,7 @@ public class OverWhelmed implements Screen{
 	Sprite nightsky;
 	SpriteBatch spriteBatch;
 	float stateTime;
+	Sprite mountains;
 	Sprite currentFrame;
 	Sprite moon;
 	List<Sprite> mistlist;
@@ -84,28 +86,30 @@ public class OverWhelmed implements Screen{
 	    viewport = new ExtendViewport(800, 600, camera);
 		batch = new SpriteBatch();
 		BackgroundRocks = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Background Rocks.png")));
+		mountains = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Mountains.png")));
 		nightsky = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Night Sky.png")));
 		background = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Background.png")));
 		wall = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Wall.png")));
 		Sprite mist = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Mist.png")));
 		mistlist.add(mist);
-		mist.scale(1);
-		mist.scale(scalingFactor);
-		moon = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Moon.png")));
 		BackgroundRocks.scale(1);
 		BackgroundRocks.scale(scalingFactor);
+		mist.scale(scalingFactor);
+		moon = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Moon.png")));
+		mountains.scale(-2);
+		mountains.scale(scalingFactor);
 		wall.scale(1);
 		moon.scale(1);
 		moon.scale(scalingFactor);
 		nightsky.scale(scalingFactor);
 		wall.scale(scalingFactor);
-		background.scale((float) 0.3);
+		background.scale(1);
 		background.scale(scalingFactor);
-		xmoonposition = 0.1f;
+		xmoonposition = -600;
 		ymoonposition = 0.1f;
-		x = 1000;
+		x = (int) (game.getWindowWidth()/2.0f);
 		wallx = -1000;
-		movement = -600;
+		movement = 0;
 		y = 25;
 		timer = 1;
 		directionforward = true;
@@ -121,11 +125,12 @@ public class OverWhelmed implements Screen{
 		stateTime += Gdx.graphics.getDeltaTime();
 		currentFrame = (Sprite)Knightanimation.getKeyFrame(stateTime, true);
 		batch.begin();
-		batch.draw(nightsky, movement/2, 0, nightsky.getScaleX()*nightsky.getWidth(), nightsky.getScaleY()*nightsky.getHeight());
+		batch.draw(nightsky, movement/3, 0, nightsky.getScaleX()*nightsky.getWidth(), nightsky.getScaleY()*nightsky.getHeight());
+		batch.draw(mountains, movement/2, 0+50, mountains.getScaleX()*mountains.getWidth(), mountains.getScaleY()*mountains.getHeight());
+		batch.draw(moon, xmoonposition + movement, ymoonposition, moon.getScaleX()*moon.getWidth(), moon.getScaleY()*moon.getHeight());
 		batch.draw(BackgroundRocks, movement, 0, BackgroundRocks.getScaleX()*BackgroundRocks.getWidth(), BackgroundRocks.getScaleY()*BackgroundRocks.getHeight());
 		batch.draw(wall, movement-150, 0, wall.getScaleX()*wall.getWidth(), wall.getScaleY()*wall.getHeight());
 		batch.draw(currentFrame, x, 46, currentFrame.getScaleX()*currentFrame.getWidth(), currentFrame.getScaleY()*currentFrame.getHeight());
-		batch.draw(moon, xmoonposition + movement, 0 + ymoonposition, moon.getScaleX()*moon.getWidth(), moon.getScaleY()*moon.getHeight());
 		batch.draw(background, movement, 0, background.getScaleX()*background.getWidth(), background.getScaleY()*background.getHeight());
 		for(Sprite mist : mistlist){
 			batch.draw(mist, mist.getX() + movement, 0, mist.getScaleX()*mist.getWidth(), mist.getScaleY()*mist.getHeight());
@@ -135,7 +140,6 @@ public class OverWhelmed implements Screen{
 		if(firstmist.getX() >= 0){
 			Sprite mist = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Mist.png")));
 			mistlist.add(0, mist);
-			mist.scale(1);
 			mist.scale(getScalingFactor());
 			mist.setX(0-mist.getWidth()*mist.getScaleX());
 		}
@@ -143,47 +147,46 @@ public class OverWhelmed implements Screen{
 		Sprite lastmist = mistlist.get(mistlist.size()-1);
 		if(lastmist.getX() >= lastmist.getWidth()*lastmist.getScaleX()+1000){
 			mistlist.remove(lastmist);
-			xmoonposition = 950;
-			ymoonposition = 100;
 		}
 		batch.end();
 		
-		if (Gdx.input.isKeyPressed(Keys.DPAD_RIGHT)) 
+		if (Gdx.input.isKeyPressed(Keys.DPAD_RIGHT)) {
 		      movement -= 5;
-		if (Gdx.input.isKeyPressed(Keys.DPAD_LEFT)) 
+		}
+		if (Gdx.input.isKeyPressed(Keys.DPAD_LEFT)){
 		      movement -= -5;
-		if (movement < -2100){
-			movement = -2100;
-			x -= -5;
 		}
-		if (x>1000){
-			movement = -2100;
-		}
-		if (Gdx.input.isKeyPressed(Keys.DPAD_LEFT)&&(x>1000)){
+		if (Gdx.input.isKeyPressed(Keys.DPAD_LEFT)&&(x>game.getWindowWidth()/2.0f)){
 			x-= 5;
 		}
-		if (xmoonposition<1000){
-			xmoonposition += 1.1;
+		if (Gdx.input.isKeyPressed(Keys.DPAD_RIGHT)&&(x<game.getWindowWidth()/2.0f)){
+			x-= -5;
+			movement = originx;
 		}
-		if (ymoonposition < 400){
-			//https://www.desmos.com/calculator/00kjado6gm
-			ymoonposition = (float) (-0.05*(0.1*Math.pow(xmoonposition-180, 2.0))+160);
+		if (movement < -background.getWidth()*getScalingFactor()){
+			movement = (int) (-background.getWidth()*getScalingFactor());
+			x -= -5;
 		}
+		if (x>game.getWindowWidth()/2){
+			movement = (int) (-background.getWidth()*getScalingFactor());
+		}		
+		xmoonposition += 0.5;
+		//https://www.desmos.com/calculator/yt6zx55r2u
+		ymoonposition = (float) (-0.0005*Math.pow(xmoonposition-2, 2.0)+160);
+		System.out.println("X:" + xmoonposition + ", Y"  + ymoonposition);
+		
 		if (x>1750){
 			x=1750;
 		}
-		if (movement >0){
-			movement = 0;
+		if (movement > originx){
+			movement = originx;
 			x -= 5;
 		}
-		if (x< 0){
-			movement = 0;
-			x=0;
+		if (x < originx){
+			movement = originx;
+			x=originx;
 		}
-		if (Gdx.input.isKeyPressed(Keys.DPAD_RIGHT)&&(x<1000)){
-			x-= -5;
-			movement = 0;
-		}
+		
 		/** if (x >= 400){
 			directionforward = false;
 		}
