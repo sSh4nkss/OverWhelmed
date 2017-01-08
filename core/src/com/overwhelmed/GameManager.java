@@ -1,4 +1,4 @@
-package com.over.whelmed;
+package com.overwhelmed;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.physics.box2d.Box2D;
@@ -14,11 +14,11 @@ public class GameManager extends Game {
 	}
 	
 	public float getWindowWidth() {
-		return windowWidth;
+		return this.windowWidth;
 	}
 
 	public float getWindowHeight() {
-		return windowHeight;
+		return this.windowHeight;
 	}
 
 	@Override

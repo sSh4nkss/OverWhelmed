@@ -1,4 +1,4 @@
-package com.over.whelmed;
+package com.overwhelmed;
 
 
 import java.io.PrintStream;
@@ -105,11 +105,11 @@ public class OverWhelmed implements Screen{
 		wall.scale(scalingFactor);
 		background.scale(1);
 		background.scale(scalingFactor);
-		xmoonposition = -600;
+		xmoonposition = 0;
 		ymoonposition = 0.1f;
 		x = (int) (game.getWindowWidth()/2.0f);
-		wallx = -1000;
-		movement = 0;
+		wallx = -1000; //Where the wall is
+		movement = 0; //The position of all sprites except knight
 		y = 25;
 		timer = 1;
 		directionforward = true;
@@ -128,9 +128,9 @@ public class OverWhelmed implements Screen{
 		batch.draw(nightsky, movement/3, 0, nightsky.getScaleX()*nightsky.getWidth(), nightsky.getScaleY()*nightsky.getHeight());
 		batch.draw(mountains, movement/2, 0+50, mountains.getScaleX()*mountains.getWidth(), mountains.getScaleY()*mountains.getHeight());
 		batch.draw(moon, xmoonposition + movement, ymoonposition, moon.getScaleX()*moon.getWidth(), moon.getScaleY()*moon.getHeight());
-		batch.draw(BackgroundRocks, movement, 0, BackgroundRocks.getScaleX()*BackgroundRocks.getWidth(), BackgroundRocks.getScaleY()*BackgroundRocks.getHeight());
-		batch.draw(wall, movement-150, 0, wall.getScaleX()*wall.getWidth(), wall.getScaleY()*wall.getHeight());
-		batch.draw(currentFrame, x, 46, currentFrame.getScaleX()*currentFrame.getWidth(), currentFrame.getScaleY()*currentFrame.getHeight());
+		batch.draw(BackgroundRocks, movement, 10, BackgroundRocks.getScaleX()*BackgroundRocks.getWidth(), BackgroundRocks.getScaleY()*BackgroundRocks.getHeight());
+		batch.draw(wall, movement-150, 10, wall.getScaleX()*wall.getWidth(), wall.getScaleY()*wall.getHeight());
+		batch.draw(currentFrame, x, 56, currentFrame.getScaleX()*currentFrame.getWidth(), currentFrame.getScaleY()*currentFrame.getHeight());
 		batch.draw(background, movement, 0, background.getScaleX()*background.getWidth(), background.getScaleY()*background.getHeight());
 		for(Sprite mist : mistlist){
 			batch.draw(mist, mist.getX() + movement, 0, mist.getScaleX()*mist.getWidth(), mist.getScaleY()*mist.getHeight());
