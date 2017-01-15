@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 public class MenuScreen implements Screen {
+	boolean click = true;
 	private GameManager game;
 	private Stage stage;
 	Image backgroundmenu = new Image(new Texture(Gdx.files.internal("..\\core\\assets\\backgroundmenu.jpg")));
@@ -34,9 +35,12 @@ public class MenuScreen implements Screen {
 		stage = new Stage();
 		playButton.addListener(new ClickListener(){
 			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				final OverWhelmed whelmed = new OverWhelmed(game);
-				game.setScreen(whelmed);
+			public void clicked(InputEvent event, float x, float y) {		
+				if(click == true){
+					final OverWhelmed whelmed = new OverWhelmed(game);
+					game.setScreen(whelmed);
+					click = false;
+				}
 				super.clicked(event, x, y);}});
 		stage.addActor(backgroundmenu);
 		stage.addActor(playButton);

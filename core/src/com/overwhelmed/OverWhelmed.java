@@ -20,6 +20,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class OverWhelmed implements Screen{
+	boolean knightdirection = false;
 	private Viewport viewport;
 	private Camera camera;
 	private GameManager game;
@@ -39,11 +40,12 @@ public class OverWhelmed implements Screen{
 	Sprite wall;
 	Sprite nightsky;
 	SpriteBatch spriteBatch;
-	float stateTime;
+	float knightAnimationTime;
 	Sprite mountains;
 	Sprite currentFrame;
 	Sprite moon;
 	List<Sprite> mistlist;
+	Sprite leftknight;
 	Sprite[] knightwalk;
 	Animation Knightanimation;
 	public OverWhelmed(GameManager game) {
@@ -79,18 +81,20 @@ public class OverWhelmed implements Screen{
 		knightwalk[2].scale(scalingFactor);
 		knightwalk[3].scale(scalingFactor);
 		
-		Knightanimation = new Animation(0.5f, knightwalk);
+		Knightanimation = new Animation(0.25f, knightwalk);
         spriteBatch = new SpriteBatch();               
-        stateTime = 0f;                                 
-		camera = new OrthographicCamera();
+        knightAnimationTime = 0f;                                 
+        camera = new OrthographicCamera();
 	    viewport = new ExtendViewport(800, 600, camera);
 		batch = new SpriteBatch();
+		leftknight = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\KnightStand.png")));
 		BackgroundRocks = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Background Rocks.png")));
 		mountains = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Mountains.png")));
 		nightsky = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Night Sky.png")));
 		background = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Background.png")));
 		wall = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Wall.png")));
 		Sprite mist = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Mist.png")));
+		currentFrame = leftknight;
 		mistlist.add(mist);
 		BackgroundRocks.scale(1);
 		BackgroundRocks.scale(scalingFactor);
@@ -99,6 +103,8 @@ public class OverWhelmed implements Screen{
 		mountains.scale(-2);
 		mountains.scale(scalingFactor);
 		wall.scale(1);
+		leftknight.scale(1);
+		leftknight.scale(scalingFactor);
 		moon.scale(1);
 		moon.scale(scalingFactor);
 		nightsky.scale(scalingFactor);
@@ -122,14 +128,15 @@ public class OverWhelmed implements Screen{
 	public void render(float delta) {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT); 
 		batch.enableBlending();
-		stateTime += Gdx.graphics.getDeltaTime();
-		currentFrame = (Sprite)Knightanimation.getKeyFrame(stateTime, true);
+		
+		
 		batch.begin();
 		batch.draw(nightsky, movement/3, 0, nightsky.getScaleX()*nightsky.getWidth(), nightsky.getScaleY()*nightsky.getHeight());
 		batch.draw(mountains, movement/2, 0+50, mountains.getScaleX()*mountains.getWidth(), mountains.getScaleY()*mountains.getHeight());
 		batch.draw(moon, xmoonposition + movement, ymoonposition, moon.getScaleX()*moon.getWidth(), moon.getScaleY()*moon.getHeight());
 		batch.draw(BackgroundRocks, movement, 10, BackgroundRocks.getScaleX()*BackgroundRocks.getWidth(), BackgroundRocks.getScaleY()*BackgroundRocks.getHeight());
 		batch.draw(wall, movement-150, 10, wall.getScaleX()*wall.getWidth(), wall.getScaleY()*wall.getHeight());
+		//batch.draw(knight, movement, 50, knight.getScaleX()*knight.getWidth(), knight.getScaleY()*knight.getHeight());
 		batch.draw(currentFrame, x, 56, currentFrame.getScaleX()*currentFrame.getWidth(), currentFrame.getScaleY()*currentFrame.getHeight());
 		batch.draw(background, movement, 0, background.getScaleX()*background.getWidth(), background.getScaleY()*background.getHeight());
 		for(Sprite mist : mistlist){
@@ -149,12 +156,23 @@ public class OverWhelmed implements Screen{
 			mistlist.remove(lastmist);
 		}
 		batch.end();
-		
+		if (!Gdx.input.isKeyPressed(Keys.DPAD_RIGHT)&& !Gdx.input.isKeyPressed(Keys.DPAD_LEFT)) {
+			if(knightdirection == false){
+				currentFrame = leftknight;
+			}
+			else{
+				//currentFrame = rightknight;
+			}
+		}
 		if (Gdx.input.isKeyPressed(Keys.DPAD_RIGHT)) {
 		      movement -= 5;
+		      knightdirection = true;
 		}
 		if (Gdx.input.isKeyPressed(Keys.DPAD_LEFT)){
 		      movement -= -5;
+		      currentFrame = (Sprite)Knightanimation.getKeyFrame(knightAnimationTime, true);
+		      knightAnimationTime += Gdx.graphics.getDeltaTime();
+		      knightdirection = false;
 		}
 		if (Gdx.input.isKeyPressed(Keys.DPAD_LEFT)&&(x>game.getWindowWidth()/2.0f)){
 			x-= 5;
