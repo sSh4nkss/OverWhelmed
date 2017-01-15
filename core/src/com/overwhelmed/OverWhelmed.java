@@ -111,7 +111,7 @@ public class OverWhelmed implements Screen{
 		wall.scale(scalingFactor);
 		background.scale(1);
 		background.scale(scalingFactor);
-		xmoonposition = 0;
+		xmoonposition = -1700;
 		ymoonposition = 0.1f;
 		x = (int) (game.getWindowWidth()/2.0f);
 		wallx = -1000; //Where the wall is
@@ -132,8 +132,8 @@ public class OverWhelmed implements Screen{
 		
 		batch.begin();
 		batch.draw(nightsky, movement/3, 0, nightsky.getScaleX()*nightsky.getWidth(), nightsky.getScaleY()*nightsky.getHeight());
+		batch.draw(moon, xmoonposition + movement/2, ymoonposition, moon.getScaleX()*moon.getWidth(), moon.getScaleY()*moon.getHeight());
 		batch.draw(mountains, movement/2, 0+50, mountains.getScaleX()*mountains.getWidth(), mountains.getScaleY()*mountains.getHeight());
-		batch.draw(moon, xmoonposition + movement, ymoonposition, moon.getScaleX()*moon.getWidth(), moon.getScaleY()*moon.getHeight());
 		batch.draw(BackgroundRocks, movement, 10, BackgroundRocks.getScaleX()*BackgroundRocks.getWidth(), BackgroundRocks.getScaleY()*BackgroundRocks.getHeight());
 		batch.draw(wall, movement-150, 10, wall.getScaleX()*wall.getWidth(), wall.getScaleY()*wall.getHeight());
 		//batch.draw(knight, movement, 50, knight.getScaleX()*knight.getWidth(), knight.getScaleY()*knight.getHeight());
@@ -188,9 +188,9 @@ public class OverWhelmed implements Screen{
 		if (x>game.getWindowWidth()/2){
 			movement = (int) (-background.getWidth()*getScalingFactor());
 		}		
-		xmoonposition += 0.5;
+		xmoonposition += 0.1;
 		//https://www.desmos.com/calculator/yt6zx55r2u
-		ymoonposition = (float) (-0.0005*Math.pow(xmoonposition-2, 2.0)+160);
+		ymoonposition = (float) (-0.0002*Math.pow(xmoonposition, 2.0)+400);
 		System.out.println("X:" + xmoonposition + ", Y"  + ymoonposition);
 		
 		if (x>1750){
