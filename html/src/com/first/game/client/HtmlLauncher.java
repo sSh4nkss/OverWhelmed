@@ -3,6 +3,7 @@ package com.first.game.client;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
+import com.overwhelmed.GameManager;
 import com.overwhelmed.OverWhelmed;
 
 public class HtmlLauncher extends GwtApplication {
@@ -14,6 +15,6 @@ public class HtmlLauncher extends GwtApplication {
 
         @Override
         public ApplicationListener createApplicationListener () {
-                return new OverWhelmed();
+                return new GameManager(480, 320);
         }
 }

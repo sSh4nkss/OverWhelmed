@@ -16,16 +16,29 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class OverWhelmed implements Screen{
+	PolygonShape groundBox;
+	Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
+	World world = new World(new Vector2(0,-10), true);
 	boolean knightdirection = false;
 	private Viewport viewport;
 	private Camera camera;
 	private GameManager game;
 	SpriteBatch batch;
 	Texture img;
+	BodyDef groundBodyDef = new BodyDef(); 
+	BodyDef knightBodyDef = new BodyDef();
 	float xmoonposition;
 	float ymoonposition;
 	int x;
@@ -36,7 +49,7 @@ public class OverWhelmed implements Screen{
 	final int originx = 0;
 	boolean directionforward;
 	Sprite BackgroundRocks;
-	Sprite background;
+	Sprite ground;
 	Sprite wall;
 	Sprite nightsky;
 	SpriteBatch spriteBatch;
@@ -61,7 +74,6 @@ public class OverWhelmed implements Screen{
 	@Override
 	public void show () {		
 		Music music = Gdx.audio.newMusic(Gdx.files.internal("..\\core\\assets\\NightTime.mp3"));
-
 		final float scalingFactor = getScalingFactor();
 		Texture knightsheet = new Texture(Gdx.files.internal("..\\core\\assets\\Knight.png"));
 		
@@ -87,11 +99,12 @@ public class OverWhelmed implements Screen{
         camera = new OrthographicCamera();
 	    viewport = new ExtendViewport(800, 600, camera);
 		batch = new SpriteBatch();
+		debugRenderer.render(world, camera.combined);
 		leftknight = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\KnightStand.png")));
 		BackgroundRocks = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Background Rocks.png")));
 		mountains = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Mountains.png")));
 		nightsky = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Night Sky.png")));
-		background = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Background.png")));
+		ground = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Ground.png")));
 		wall = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Wall.png")));
 		Sprite mist = new Sprite(new Texture(Gdx.files.internal("..\\core\\assets\\Mist.png")));
 		currentFrame = leftknight;
@@ -109,10 +122,10 @@ public class OverWhelmed implements Screen{
 		moon.scale(scalingFactor);
 		nightsky.scale(scalingFactor);
 		wall.scale(scalingFactor);
-		background.scale(1);
-		background.scale(scalingFactor);
+		ground.scale(1);
+		ground.scale(scalingFactor);
 		xmoonposition = -1700;
-		ymoonposition = 0.1f;
+		ymoonposition = -1000.0f;
 		x = (int) (game.getWindowWidth()/2.0f);
 		wallx = -1000; //Where the wall is
 		movement = 0; //The position of all sprites except knight
@@ -122,14 +135,18 @@ public class OverWhelmed implements Screen{
 		music.play();
 		music.setLooping(true);
 		music.setVolume(0.5f); 
+		groundBodyDef.position.set(new Vector2(0, 0)); 
+		Body groundBody = world.createBody(groundBodyDef); 
+		groundBox = new PolygonShape();
+		groundBox.setAsBox(camera.viewportWidth, 10.0f);
+		groundBody.createFixture(groundBox, 0.0f); 
+		groundBody.setUserData(ground);
 
 	}
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT); 
-		batch.enableBlending();
-		
-		
+		batch.enableBlending();		
 		batch.begin();
 		batch.draw(nightsky, movement/3, 0, nightsky.getScaleX()*nightsky.getWidth(), nightsky.getScaleY()*nightsky.getHeight());
 		batch.draw(moon, xmoonposition + movement/2, ymoonposition, moon.getScaleX()*moon.getWidth(), moon.getScaleY()*moon.getHeight());
@@ -138,7 +155,20 @@ public class OverWhelmed implements Screen{
 		batch.draw(wall, movement-150, 10, wall.getScaleX()*wall.getWidth(), wall.getScaleY()*wall.getHeight());
 		//batch.draw(knight, movement, 50, knight.getScaleX()*knight.getWidth(), knight.getScaleY()*knight.getHeight());
 		batch.draw(currentFrame, x, 56, currentFrame.getScaleX()*currentFrame.getWidth(), currentFrame.getScaleY()*currentFrame.getHeight());
-		batch.draw(background, movement, 0, background.getScaleX()*background.getWidth(), background.getScaleY()*background.getHeight());
+		
+		Array<Body> bodies = new Array<Body>();
+		world.getBodies(bodies);
+		for (Body b : bodies) {
+		    Sprite e = (Sprite) b.getUserData();
+		    if (e != null) {
+		        e.setPosition(b.getPosition().x, b.getPosition().y);
+		        e.setRotation(MathUtils.radiansToDegrees * b.getAngle());
+		        batch.draw(ground, e.getX() + movement, e.getY(), ground.getScaleX()*ground.getWidth(), ground.getScaleY()*ground.getHeight());
+		    }
+		}
+		
+		
+		
 		for(Sprite mist : mistlist){
 			batch.draw(mist, mist.getX() + movement, 0, mist.getScaleX()*mist.getWidth(), mist.getScaleY()*mist.getHeight());
 			mist.setX(mist.getX()+1);
@@ -181,12 +211,12 @@ public class OverWhelmed implements Screen{
 			x-= -5;
 			movement = originx;
 		}
-		if (movement < -background.getWidth()*getScalingFactor()){
-			movement = (int) (-background.getWidth()*getScalingFactor());
+		if (movement < -ground.getWidth()*getScalingFactor()){
+			movement = (int) (-ground.getWidth()*getScalingFactor());
 			x -= -5;
 		}
 		if (x>game.getWindowWidth()/2){
-			movement = (int) (-background.getWidth()*getScalingFactor());
+			movement = (int) (-ground.getWidth()*getScalingFactor());
 		}		
 		xmoonposition += 0.1;
 		//https://www.desmos.com/calculator/yt6zx55r2u
@@ -219,10 +249,12 @@ public class OverWhelmed implements Screen{
 		}
 		timer++;
 		*/
+		world.step(1/60f, 6, 2);
 	}
 	@Override
 	public void dispose() {
 		batch.dispose();
+		groundBox.dispose();
 	}
 	
 	@Override
