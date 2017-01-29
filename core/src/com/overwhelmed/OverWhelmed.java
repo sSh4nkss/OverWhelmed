@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -28,8 +29,11 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class OverWhelmed implements Screen{
+	PolygonShape knightBox;
 	PolygonShape groundBox;
 	Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
+	Body groundBody;
+	Body knightBody;
 	World world = new World(new Vector2(0,-10), true);
 	boolean knightdirection = false;
 	private Viewport viewport;
@@ -136,11 +140,19 @@ public class OverWhelmed implements Screen{
 		music.setLooping(true);
 		music.setVolume(0.5f); 
 		groundBodyDef.position.set(new Vector2(0, 0)); 
-		Body groundBody = world.createBody(groundBodyDef); 
+		groundBody = world.createBody(groundBodyDef); 
 		groundBox = new PolygonShape();
 		groundBox.setAsBox(camera.viewportWidth, 10.0f);
 		groundBody.createFixture(groundBox, 0.0f); 
 		groundBody.setUserData(ground);
+		knightBodyDef.position.set(new Vector2(100, 100));
+		knightBody = world.createBody(knightBodyDef);
+		Rectangle knightrectangle = knightwalk[0].getBoundingRectangle();
+		float knightboxheight = knightrectangle.getHeight();
+		float knightboxwidth = knightrectangle.getWidth();
+		knightBox = new PolygonShape();
+		knightBox.setAsBox(knightboxwidth, knightboxheight);
+		knightBody.setUserData(Knightanimation);
 
 	}
 	@Override
@@ -159,11 +171,22 @@ public class OverWhelmed implements Screen{
 		Array<Body> bodies = new Array<Body>();
 		world.getBodies(bodies);
 		for (Body b : bodies) {
-		    Sprite e = (Sprite) b.getUserData();
-		    if (e != null) {
-		        e.setPosition(b.getPosition().x, b.getPosition().y);
-		        e.setRotation(MathUtils.radiansToDegrees * b.getAngle());
-		        batch.draw(ground, e.getX() + movement, e.getY(), ground.getScaleX()*ground.getWidth(), ground.getScaleY()*ground.getHeight());
+		    if(b == groundBody){
+				Sprite e = (Sprite) b.getUserData();
+			    if (e != null) {
+			        e.setPosition(b.getPosition().x, b.getPosition().y);
+			        e.setRotation(MathUtils.radiansToDegrees * b.getAngle());
+			        batch.draw(ground, e.getX() + movement, e.getY(), ground.getScaleX()*ground.getWidth(), ground.getScaleY()*ground.getHeight());
+			    }
+		    }
+		    else if(b == knightBody){
+		    	Animation k = (Animation) b.getUserData();
+		    	  if (k != null) {
+				         x = (int) b.getPosition().x;
+				        
+		    	  }
+		    	//need to work here
+		    	
 		    }
 		}
 		
